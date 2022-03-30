@@ -1,0 +1,80 @@
+--- PKGBUILD	2022-03-29 17:19:27.305505804 -0700
++++ PKGBUILD.mod	2022-03-29 17:28:22.618852304 -0700
+@@ -3,7 +3,7 @@
+ pkgbase=python-onnxruntime
+ # Not split DNNL EP to another package as it's needed unconditionally at runtime if built at compile time
+ # https://github.com/microsoft/onnxruntime/blob/v1.9.1/onnxruntime/python/onnxruntime_pybind_state.cc#L533
+-pkgname=(python-onnxruntime python-onnxruntime-cuda)
++pkgname=(python-onnxruntime)
+ pkgver=1.11.0
+ pkgdesc='Cross-platform, high performance scoring engine for ML models'
+ pkgrel=1
+@@ -11,7 +11,7 @@
+ url='https://github.com/microsoft/onnxruntime'
+ license=(MIT)
+ depends=(nsync re2 python-flatbuffers python-numpy python-protobuf openmpi onednn)
+-makedepends=(git cmake pybind11 python-setuptools nlohmann-json chrono-date boost eigen flatbuffers cuda cudnn nccl)
++makedepends=(git cmake pybind11 python-setuptools nlohmann-json chrono-date boost eigen flatbuffers)
+ optdepends=(
+   # https://github.com/microsoft/onnxruntime/pull/9969
+   'python-onnx: for the backend API, quantization, orttraining, transformers and various tools'
+@@ -53,7 +53,7 @@
+ options+=('!lto')
+ 
+ # Check PKGBUILDs of python-pytorch and tensorflow for CUDA architectures built by official packages
+-_CUDA_ARCHITECTURES="52-real;53-real;60-real;61-real;62-real;70-real;72-real;75-real;80-real;86-real;86-virtual"
++# _CUDA_ARCHITECTURES="52-real;53-real;60-real;61-real;62-real;70-real;72-real;75-real;80-real;86-real;86-virtual"
+ 
+ prepare() {
+   cd onnxruntime
+@@ -100,15 +100,15 @@
+   #    total processes may be much larger than the number of cores - let
+   #    the scheduler handle it.
+   cmake_args+=(
+-    -DCMAKE_CUDA_FLAGS="-t0"
+-    -DCMAKE_CUDA_ARCHITECTURES="$_CUDA_ARCHITECTURES"
+-    -DCMAKE_CUDA_STANDARD_REQUIRED=ON
+-    -DCMAKE_CXX_STANDARD_REQUIRED=ON
+-    -Donnxruntime_USE_CUDA=ON
+-    -Donnxruntime_CUDA_HOME=/opt/cuda
+-    -DCMAKE_CUDA_COMPILER:PATH=/opt/cuda/bin/nvcc
+-    -Donnxruntime_CUDNN_HOME=/usr
+-    -Donnxruntime_USE_NCCL=ON
++#    -DCMAKE_CUDA_FLAGS="-t0"
++#    -DCMAKE_CUDA_ARCHITECTURES="$_CUDA_ARCHITECTURES"
++#    -DCMAKE_CUDA_STANDARD_REQUIRED=ON
++#    -DCMAKE_CXX_STANDARD_REQUIRED=ON
++    -Donnxruntime_USE_CUDA=OFF
++#    -Donnxruntime_CUDA_HOME=/opt/cuda
++#    -DCMAKE_CUDA_COMPILER:PATH=/opt/cuda/bin/nvcc
++#    -Donnxruntime_CUDNN_HOME=/usr
++    -Donnxruntime_USE_NCCL=OFF
+   )
+ 
+   cmake -B build -S cmake "${cmake_args[@]}" "$@"
+@@ -134,15 +134,15 @@
+   rm -vf "$pkgdir/$PY_ORT_DIR"/capi/libonnxruntime_providers_*
+ 
+   # installed as split packages
+-  rm -vf "$pkgdir"/usr/lib/libonnxruntime_providers_cuda.so
++#  rm -vf "$pkgdir"/usr/lib/libonnxruntime_providers_cuda.so
+ }
+ 
+-package_python-onnxruntime-cuda() {
+-  depends+=(cuda cudnn nccl python-onnxruntime)
+-  pkgdesc+=' (CUDA execution provider)'
+-
+-  cd onnxruntime/build
+-  install -Dm755 libonnxruntime_providers_cuda.so -t "$pkgdir"/usr/lib
+-  install -Ddm755 "$pkgdir"/usr/share/licenses
+-  ln -s python-onnxruntime "$pkgdir"/usr/share/licenses/$pkgname
+-}
++# package_python-onnxruntime-cuda() {
++#   depends+=(cuda cudnn nccl python-onnxruntime)
++#   pkgdesc+=' (CUDA execution provider)'
++# 
++#   cd onnxruntime/build
++#   install -Dm755 libonnxruntime_providers_cuda.so -t "$pkgdir"/usr/lib
++#   install -Ddm755 "$pkgdir"/usr/share/licenses
++#   ln -s python-onnxruntime "$pkgdir"/usr/share/licenses/$pkgname
++# }

@@ -1,0 +1,22 @@
+--- install-orttraining-files.diff	2022-03-29 17:09:36.128824585 -0700
++++ install-orttraining-files.diff.mod	2022-03-29 17:10:45.345492958 -0700
+@@ -9,11 +9,11 @@
+      packages.extend(['onnxruntime.training',
+                       'onnxruntime.training.amp',
+                       'onnxruntime.training.optim',
+-@@ -373,6 +373,7 @@
+-     package_data['onnxruntime.training.ortmodule.torch_cpp_extensions.cuda.torch_gpu_allocator'] = ['*.cc']
+-     package_data['onnxruntime.training.ortmodule.torch_cpp_extensions.cuda.fused_ops'] = \
+-         ['*.cpp', '*.cu', '*.cuh', '*.h']
+-+if enable_training:
+-     requirements_file = "requirements-training.txt"
+-     # with training, we want to follow this naming convention:
+-     # stable:
++# @@ -373,6 +373,7 @@
++#      package_data['onnxruntime.training.ortmodule.torch_cpp_extensions.cuda.torch_gpu_allocator'] = ['*.cc']
++#      package_data['onnxruntime.training.ortmodule.torch_cpp_extensions.cuda.fused_ops'] = \
++#          ['*.cpp', '*.cu', '*.cuh', '*.h']
++# +if enable_training:
++#      requirements_file = "requirements-training.txt"
++#      # with training, we want to follow this naming convention:
++#      # stable:
